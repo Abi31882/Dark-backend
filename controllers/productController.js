@@ -39,9 +39,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
     return next();
 
   // 1) Front image
-  req.body.imageFront = `${req.protocol}://${req.get(
-    'host'
-  )}/products/product-${req.params.id}-${Date.now()}-front.jpeg`;
+  req.body.imageFront = `product-${req.params.id}-${Date.now()}-front.jpeg`;
   await sharp(req.files.imageFront[0].buffer)
     .resize(150, 150)
     .toFormat('jpeg')
@@ -49,9 +47,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
     .toFile(`public/img/products/${req.body.imageFront}`);
 
   // 2) cover image
-  req.body.imageCover = `${req.protocol}://${req.get(
-    'host'
-  )}/products/product-${req.params.id}-${Date.now()}-cover.jpeg`;
+  req.body.imageCover = `product-${req.params.id}-${Date.now()}-cover.jpeg`;
   await sharp(req.files.imageCover[0].buffer)
     .resize(640, 640)
     .toFormat('jpeg')
@@ -63,9 +59,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
 
   await Promise.all(
     req.files.images.map(async (file, i) => {
-      const filename = `${req.protocol}://${req.get('host')}/products/product-${
-        req.params.id
-      }-${Date.now()}-${i + 1}.jpeg`;
+      const filename = `product-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
 
       await sharp(file.buffer)
         .resize(640, 640)
