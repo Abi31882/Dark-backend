@@ -189,9 +189,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   // 3) send it to customer's email
   try {
-    const resetURL = `${req.protocol}://${req.get(
-      'host'
-    )}/api/v1/customers/resetPassword/${resetToken}`;
+    // const resetURL = `${req.protocol}://${req.get(
+    //   'host'
+    // )}/api/v1/customers/resetPassword/${resetToken}`;
+
+    // const resetUrl = `${req.protocol}://dark-3.herokuapp.com/resetPassword`
+
+    const resetURL = resetToken;
     await new Email(customer, resetURL).sendPasswordReset();
 
     res.status(200).json({

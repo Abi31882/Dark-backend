@@ -46,6 +46,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "start_prod": "set NODE_ENV=production&&nodemon server.js",
     "start_dev": "set NODE_ENV=development&&nodemon server.js",
     "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
     "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
