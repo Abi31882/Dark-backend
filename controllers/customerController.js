@@ -37,7 +37,7 @@ exports.resizeCustomerPhoto = catchAsync(async (req, res, next) => {
   req.file.filename = `customer-${req.customer.id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
-    .resize(500, 500)
+    .resize(150, 150)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`public/img/customers/${req.file.filename}`);
@@ -73,7 +73,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, 'name', 'email');
+  const filteredBody = filterObj(req.body, 'name', 'email', 'address');
   if (req.file) filteredBody.photo = req.file.filename;
 
   // 3) Update customer document
@@ -82,7 +82,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  res.status(200).json(doc);
+  res.status(200).json({
+    status: 'success',
+    doc,
+  });
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {

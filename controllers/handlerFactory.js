@@ -42,20 +42,30 @@ exports.createOneProduct = (Model) =>
     const category = await Category.findById(req.params.categoryId);
 
     if (category) {
-      try {
-        const doc = await Model.create(req.body);
+      const doc = await Model.create(req.body);
 
-        res.status(201).json({
-          status: 'success',
-          doc,
-        });
-      } catch (err) {
-        res.status(404).json(err);
-      }
-    } else {
-      res.status(404).json('there is no category matched');
+      res.status(201).json({
+        status: 'success',
+        doc,
+      });
+      // next();
     }
-    next();
+
+    // if (category) {
+    //   try {
+    //     const doc = await Model.create(req.body);
+
+    //     res.status(201).json({
+    //       status: 'success',
+    //       doc,
+    //     });
+    //   } catch (err) {
+    //     res.status(404).json(err);
+    //   }
+    // } else {
+    //   res.status(404).json('there is no category matched');
+    // }
+    // next();
   });
 
 exports.getOne = (Model, popOptions) =>
