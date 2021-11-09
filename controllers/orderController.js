@@ -37,7 +37,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `${req.protocol}://localhost:3000/products`,
+    success_url: `http://127.0.0.1:3000/products`,
     cancel_url: `${req.protocol}://${req.get('host')}/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
