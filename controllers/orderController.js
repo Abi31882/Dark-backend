@@ -70,25 +70,25 @@ const createBookingCheckout = async (session) => {
   await Order.create({ product, customer, price });
 };
 
-exports.webhookCheckout = (req, res, next) => {
-  // const signature = req.headers['stripe-signature'];
-
+exports.webhookCheckout = (request, response, next) => {
+  const signature = request.headers['stripe-signature'];
+  // const event = request.body
   let event;
+  const paymentIntent = event.data.object;
   // const headers = JSON.parse(event.headers);
   try {
     event = stripe.webhooks.constructEvent(
-      event.rawbody,
-      req.headers['stripe-signature'],
+      event.body,
+      signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    return res.status(400).send(`Webhook error: ${err.message}`);
+    return response.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.type === 'charge.succeeded')
-    createBookingCheckout(event.data.object);
+  if (event.type === 'charge.succeeded') createBookingCheckout(paymentIntent);
 
-  res.status(200).json({ received: true });
+  response.status(200).json({ received: true });
 };
 
 // exports.createOrder = factory.createOne(Order);
