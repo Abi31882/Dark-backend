@@ -10,6 +10,7 @@ const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -46,11 +47,27 @@ const limiter = rateLimit({
 });
 app.use('/', limiter);
 
+// app.use(
+//   express.json({
+//     verify: (req, res, buf) => {
+//       req.rawBody = buf;
+//     },
+//   })
+// );
+
 app.post(
   '/webhook-checkout',
-  express.raw({ type: 'application/json' }),
+  app.use(bodyParser.raw({ type: '*/*' })),
   orderController.webhookCheckout
 );
+
+// this.server.use((req, res, next) => {
+//   if (req.originalUrl.startsWith('/webhook')) {
+//     next();
+//   } else {
+//     express.json()(req, res, next);
+//   }
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
