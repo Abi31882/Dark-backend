@@ -70,25 +70,62 @@ const createBookingCheckout = async (session) => {
   await Order.create({ product, customer, price });
 };
 
-exports.webhookCheckout = (request, response, next) => {
-  const signature = request.headers['stripe-signature'];
-  // const event = request.body
+exports.webhookCheckout = (req, res, next) => {
+  // const signature = request.headers['stripe-signature'];
+  // // const event = request.body
+  // let event;
+  // // const headers = JSON.parse(event.headers);
+  // try {
+  //   event = stripe.webhooks.constructEvent(
+  //     event.body,
+  //     signature,
+  //     process.env.STRIPE_WEBHOOK_SECRET
+  //   );
+  // } catch (err) {
+  //   return response.status(400).send(`Webhook error: ${err.message}`);
+  // }
+
+  // if (event.type === 'coupon.created') createBookingCheckout(paymentIntent);
+
+  // response.status(200).json({ received: true });
+
   let event;
-  const paymentIntent = event.data.object;
-  // const headers = JSON.parse(event.headers);
+  // const paymentIntent = event.data.object;
+
+  // Verify the event came from Stripe
   try {
+    const sig = req.headers['stripe-signature'];
     event = stripe.webhooks.constructEvent(
-      event.body,
-      signature,
+      req.body,
+      sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    return response.status(400).send(`Webhook error: ${err.message}`);
+    // On error, log and return the error message
+    console.log(`❌ Error message: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event.type === 'charge.succeeded') createBookingCheckout(paymentIntent);
+  switch (event.type) {
+    case 'coupon.created': {
+      // All the verification checks passed
+      const verificationSession = event.data.object;
+      createBookingCheckout(verificationSession);
+      break;
+    }
+    default: {
+      // eslint-disable-next-line no-alert
+      console.log('something happened');
+    }
+  }
 
-  response.status(200).json({ received: true });
+  // if (event.type === 'coupon.created') createBookingCheckout(paymentIntent);
+
+  res.status(200).json({ received: true });
+
+  // Successfully constructed event
+
+  // res.json({received: true});
 };
 
 // exports.createOrder = factory.createOne(Order);
