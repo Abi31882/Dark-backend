@@ -37,7 +37,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `${req.protocol}://127.0.0.1:3000/products`,
+    success_url: `${req.protocol}://localhost:3000/products`,
     cancel_url: `${req.protocol}://${req.get('host')}/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
@@ -45,7 +45,9 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
       {
         name: `${product.name}`,
         description: product.description,
-        images: [`http://127.0.0.1:8000/img/products/${product.imageFront}`],
+        images: [
+          `https://dark-3.herokuapp.com/img/products/${product.imageFront}`,
+        ],
         amount: product.price * 100,
         currency: 'inr',
         quantity: 1,
