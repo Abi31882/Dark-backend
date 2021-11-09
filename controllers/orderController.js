@@ -37,7 +37,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `http://127.0.0.1:3000/products`,
+    success_url: `${req.protocol}://${req.get('host')}/products`,
     cancel_url: `${req.protocol}://${req.get('host')}/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
@@ -84,7 +84,8 @@ exports.webhookCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.type === 'coupon.created') createBookingCheckout(event.data.object);
+  if (event.type === 'charge.succeeded')
+    createBookingCheckout(event.data.object);
 
   res.status(200).json({ received: true });
 };

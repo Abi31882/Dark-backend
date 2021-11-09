@@ -3,6 +3,7 @@ const productController = require('../controllers/productController');
 const authController = require('../controllers/authController');
 const reviewRouter = require('./reviewRoutes');
 const cartRouter = require('./cartRoutes');
+const orderController = require('../controllers/orderController');
 
 const router = express.Router({ mergeParams: true });
 
@@ -11,7 +12,11 @@ router.use('/:productId/reviews', reviewRouter);
 
 router
   .route('/top-cheap')
-  .get(productController.aliasTopProducts, productController.getAllProducts);
+  .get(
+    productController.aliasTopProducts,
+    orderController.webhookCheckout,
+    productController.getAllProducts
+  );
 
 router
   .route('/')
