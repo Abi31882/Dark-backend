@@ -10,51 +10,26 @@ exports.setCustomerId = (req, res, next) => {
 };
 
 exports.addToCart = catchAsync(async (req, res, next) => {
+  const { productId } = req.params;
+  // const { cartId } = req.params; //TODO: the logged in user id
+
   const doc = await Cart.findById(req.params.cartId);
-  const products = await Product.findById(req.params.productId);
+
   if (!doc) {
-    return next(
-      new AppError(
-        'Sorry, there is no doc created, please create a doc first',
-        404
-      )
-    );
+    return next(new AppError('no cart created', 400));
+  }
+  const product = doc.product.find((p) => p.id === productId);
+
+  if (product) {
+    return next(new AppError('already in the doc', 400));
   }
 
-  if (!products) {
-    return next(
-      new AppError(
-        'Sorry, there is no such product, please specify correctly',
-        404
-      )
-    );
-  }
-
-  if (doc.product.includes(req.params.productId)) {
-    return next(
-      new AppError(
-        'this product is already in the doc, please increase the quantity manually',
-        404
-      )
-    );
-  }
-  doc.product.push(req.params.productId);
-
-  await doc.save({ validateBeforeSave: false });
-
-  // const product = await doc.product.map((el) => el === req.params.productId);
-  // console.log(product);
-
-  // if (product) {
-  //   return next(
-  //     new AppError(
-  //       'this product is already in the doc, please increase the quantity manually',
-  //       404
-  //     )
-  //   );
-  // }
-
-  res.status(200).json(doc);
+  doc.product.push(productId);
+  await doc.save();
+  res.status(200).json({
+    status: 'success',
+    doc,
+  });
 });
 
 exports.updateQuantity = catchAsync(async (req, res, next) => {
@@ -103,7 +78,10 @@ exports.deleteFromCart = catchAsync(async (req, res, next) => {
 
   await doc.save({ validateBeforeSave: false });
 
-  res.status(200).json(doc);
+  res.status(200).json({
+    status: 'success',
+    doc,
+  });
 });
 
 exports.getAllCarts = factory.getAll(Cart);
@@ -112,11 +90,27 @@ exports.updateCart = factory.updateOne(Cart);
 exports.deleteCart = factory.deleteOne(Cart);
 
 exports.getCart = catchAsync(async (req, res, next) => {
-  const doc = await Cart.findById(req.params.id);
+  const doc = await Cart.findOne({ customer: req.customer.id }).exec();
 
   if (!doc) {
     return next(new AppError('No Cart found with that ID', 404));
   }
 
-  res.status(200).json(doc);
+  res.status(200).json({
+    status: 'success',
+    doc,
+  });
 });
+
+// exports.getMyCart = catchAsync(async (req, res, next) => {
+//   const doc = await Cart.findById(req.params.cartId).exec();
+
+//   if (!doc) {
+//     return next(new AppError('No Cart found with that ID', 404));
+//   }
+
+//   res.status(200).json({
+//     status: 'success',
+//     doc,
+//   });
+// });

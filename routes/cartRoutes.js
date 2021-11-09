@@ -25,7 +25,7 @@ router.route('/create').post(
 );
 
 router
-  .route('/myCart/:id')
+  .route('/myCart')
   .get(cartController.getCart)
   .delete(
     authController.restrictTo('customer', 'admin'),

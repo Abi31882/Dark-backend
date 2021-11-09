@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.use(authController.protect);
 
-router.get('/checkout-session/:productId', orderController.getCheckoutSession);
+router.get(
+  '/checkout-session/:productId',
+  authController.protect,
+  orderController.getCheckoutSession
+);
 
 router.get('/my-orders', authController.protect, orderController.getMyOrders);
 

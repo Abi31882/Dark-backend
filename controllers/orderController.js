@@ -1,6 +1,4 @@
-const stripe = require('stripe')(
-  'sk_test_51Jaw5qSEDdC22uUYvRL80rQWQhB1ENN6oksqNy5P8vDK9yrQHBwbmQSaWr6sdFLwPoetcfNG003SubaMw0wxMaXo00jnncg1lf'
-);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Product = require('../models/productModel');
 const Customer = require('../models/customerModel');
 const Order = require('../models/orderModel');
@@ -39,23 +37,17 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `${req.protocol}://${req.get(
-      'host'
-    )}/my-products?alert=booking`,
+    success_url: `${req.protocol}://127.0.0.1:3000/products`,
     cancel_url: `${req.protocol}://${req.get('host')}/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
     line_items: [
       {
-        name: `${product.name} Product`,
-        description: product.summary,
-        images: [
-          `${req.protocol}://${req.get('host')}/img/products/${
-            product.imageCover
-          }`,
-        ],
+        name: `${product.name}`,
+        description: product.description,
+        images: [`http://127.0.0.1:8000/img/products/${product.imageFront}`],
         amount: product.price * 100,
-        currency: 'usd',
+        currency: 'inr',
         quantity: 1,
       },
     ],
