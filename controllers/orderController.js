@@ -117,7 +117,7 @@ exports.webhookCheckout = (req, res, next) => {
     }
     default: {
       // eslint-disable-next-line no-alert
-      event.type = 'coupon.created';
+      event.type = 'checkout.session.completed';
     }
   }
 
