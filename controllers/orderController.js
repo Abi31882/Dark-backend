@@ -109,7 +109,7 @@ exports.webhookCheckout = (req, res, next) => {
   }
 
   switch (event.type) {
-    case 'coupon.created': {
+    case 'checkout.session.completed': {
       // All the verification checks passed
       const verificationSession = event.data.object;
       createBookingCheckout(verificationSession);
