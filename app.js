@@ -10,6 +10,7 @@ const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+// const bodyParser = require('body-parser');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -53,6 +54,14 @@ app.use('/', limiter);
 //     },
 //   })
 // );
+
+app.use((req, res, next) => {
+  if (req.originalUrl === '/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 app.post(
   '/webhook-checkout',

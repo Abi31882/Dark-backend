@@ -63,6 +63,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 const createBookingCheckout = async (session) => {
+  // const product = await Product.findById(req.params.productId);
+
   const product = session.client_reference_id;
   const customer = (await Customer.findOne({ email: session.customer_email }))
     .id;
@@ -115,7 +117,7 @@ exports.webhookCheckout = (req, res, next) => {
     }
     default: {
       // eslint-disable-next-line no-alert
-      console.log('something happened');
+      event.type = 'coupon.created';
     }
   }
 
