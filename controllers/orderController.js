@@ -71,6 +71,7 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
+  let event;
   const payload = {
     id: 'evt_test_webhook',
     object: 'event',
@@ -84,12 +85,13 @@ exports.webhookCheckout = (req, res, next) => {
     secret,
   });
   try {
-    const event = stripe.webhooks.constructEvent(payloadString, header, secret);
-    if (event.type === 'checkout.session.completed')
-      createBookingCheckout(event.data.object);
+    event = stripe.webhooks.constructEvent(payloadString, header, secret);
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
+
+  if (event.type === 'checkout.session.completed')
+    createBookingCheckout(event.data.object);
 
   // if (event.type === 'checkout.session.completed')
   //   createBookingCheckout(req.data.object);
