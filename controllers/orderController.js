@@ -66,7 +66,7 @@ const createBookingCheckout = async (session) => {
   const product = session.client_reference_id;
   const customer = (await Customer.findOne({ email: session.customer_email }))
     .id;
-  const price = session.display_items[0].amount / 100;
+  const price = session.amount_total;
   await Order.create({ product, customer, price });
 };
 
@@ -92,9 +92,6 @@ exports.webhookCheckout = (req, res, next) => {
 
   if (event.type === 'checkout.session.completed')
     createBookingCheckout(event.data.object);
-
-  // if (event.type === 'checkout.session.completed')
-  //   createBookingCheckout(req.data.object);
 
   res.status(200).json({ received: true });
 };
