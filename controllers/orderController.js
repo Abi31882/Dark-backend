@@ -73,6 +73,18 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
+  const payload = {
+    id: 'we_1Ju89ySEDdC22uUYAT6NyRAL',
+    object: 'event',
+  };
+
+  const payloadString = JSON.stringify(payload, null, 2);
+  const secret = 'whsec_2RvTFQLL5HJrtOoC1h9XQC5DUAUbqbCI';
+
+  const header = stripe.webhooks.generateTestHeaderString({
+    payload: payloadString,
+    secret,
+  });
   // const signature = request.headers['stripe-signature'];
   // // const event = request.body
   // let event;
@@ -96,12 +108,8 @@ exports.webhookCheckout = (req, res, next) => {
 
   // Verify the event came from Stripe
   try {
-    const sig = req.headers['stripe-signature'];
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRETS
-    );
+    // const sig = req.headers['stripe-signature'];
+    event = stripe.webhooks.constructEvent(payloadString, header, secret);
   } catch (err) {
     // On error, log and return the error message
     console.log(`❌ Error message: ${err.message}`);
@@ -117,7 +125,9 @@ exports.webhookCheckout = (req, res, next) => {
     }
     default: {
       // eslint-disable-next-line no-alert
+      const verificationSession = event.data.object;
       event.type = 'checkout.session.completed';
+      createBookingCheckout(verificationSession);
     }
   }
 
