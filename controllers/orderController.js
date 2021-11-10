@@ -63,8 +63,6 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 const createBookingCheckout = async (session) => {
-  // const product = await Product.findById(req.params.productId);
-
   const product = session.client_reference_id;
   const customer = (await Customer.findOne({ email: session.customer_email }))
     .id;
@@ -73,71 +71,24 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
-  const payload = {
-    id: 'we_1Ju89ySEDdC22uUYAT6NyRAL',
-    object: 'event',
-  };
-
-  const payloadString = JSON.stringify(payload, null, 2);
-  const secret = 'whsec_2RvTFQLL5HJrtOoC1h9XQC5DUAUbqbCI';
-
-  const header = stripe.webhooks.generateTestHeaderString({
-    payload: payloadString,
-    secret,
-  });
-  // const signature = request.headers['stripe-signature'];
-  // // const event = request.body
-  // let event;
-  // // const headers = JSON.parse(event.headers);
-  // try {
-  //   event = stripe.webhooks.constructEvent(
-  //     event.body,
-  //     signature,
-  //     process.env.STRIPE_WEBHOOK_SECRET
-  //   );
-  // } catch (err) {
-  //   return response.status(400).send(`Webhook error: ${err.message}`);
-  // }
-
-  // if (event.type === 'coupon.created') createBookingCheckout(paymentIntent);
-
-  // response.status(200).json({ received: true });
+  // const signature = req.headers['stripe-signature'];
 
   let event;
-  // const paymentIntent = event.data.object;
-
-  // Verify the event came from Stripe
+  // const headers = JSON.parse(event.headers);
   try {
-    // const sig = req.headers['stripe-signature'];
-    event = stripe.webhooks.constructEvent(payloadString, header, secret);
+    event = stripe.webhooks.constructEvent(
+      event.rawbody,
+      req.headers['stripe-signature'],
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
-    // On error, log and return the error message
-    console.log(`❌ Error message: ${err.message}`);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  switch (event.type) {
-    case 'checkout.session.completed': {
-      // All the verification checks passed
-      const verificationSession = event.data.object;
-      createBookingCheckout(verificationSession);
-      break;
-    }
-    default: {
-      // eslint-disable-next-line no-alert
-      const verificationSession = event.data.object;
-      event.type = 'checkout.session.completed';
-      createBookingCheckout(verificationSession);
-    }
-  }
-
-  // if (event.type === 'coupon.created') createBookingCheckout(paymentIntent);
+  if (event.type === 'checkout.session.completed')
+    createBookingCheckout(event.data.object);
 
   res.status(200).json({ received: true });
-
-  // Successfully constructed event
-
-  // res.json({received: true});
 };
 
 // exports.createOrder = factory.createOne(Order);
