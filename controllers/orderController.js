@@ -37,8 +37,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `${req.protocol}://${req.get('host')}/products`,
-    cancel_url: `${req.protocol}://${req.get('host')}/products/${product.id}`,
+    success_url: `https://youthful-clarke-cacfd7.netlify.app/products`,
+    cancel_url: `https://youthful-clarke-cacfd7.netlify.app/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
     line_items: [
@@ -73,7 +73,7 @@ const createBookingCheckout = async (session) => {
 exports.webhookCheckout = (req, res, next) => {
   let event;
   const payload = {
-    id: 'evt_test_webhook',
+    id: 'we_1Ju89ySEDdC22uUYAT6NyRAL',
     object: 'event',
   };
 
@@ -90,8 +90,10 @@ exports.webhookCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.type === 'checkout.session.completed')
+  if (event.type === 'checkout.session.completed') {
     createBookingCheckout(event.data.object);
+    console.log(event.data.object);
+  }
 
   res.status(200).json({ received: true });
 };
