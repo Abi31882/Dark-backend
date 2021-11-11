@@ -69,7 +69,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       // required: [true, 'A product hmust have a cover image'],
     },
-    images: [String],
+    // images: [String],
+    image1: { type: String },
+    image2: { type: String },
+    image3: { type: String },
     uploadedAt: {
       type: Date,
       default: Date.now(),

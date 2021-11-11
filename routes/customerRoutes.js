@@ -8,7 +8,9 @@ const router = express.Router();
 // router.use('/:customerId/cart', cartRouter);
 
 router.post('/signup', authController.signup);
+router.post('/retailor-signup', authController.retailorSignup);
 router.post('/login', authController.login);
+router.post('/retailor-login', authController.retailorLogin);
 router.get('/logout', authController.logout);
 
 router.post('/forgotPassword', authController.forgotPassword);

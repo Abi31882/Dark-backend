@@ -26,7 +26,6 @@ const customerSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['customer', 'admin', 'retailor'],
-    default: 'customer',
   },
   category: {
     type: mongoose.Schema.ObjectId,

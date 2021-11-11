@@ -67,7 +67,7 @@ const createBookingCheckout = async (session) => {
   const customer = (await Customer.findOne({ email: session.customer_email }))
     .id;
   const price = session.amount_total;
-  await Order.create({ product, customer, price });
+  await Order.create({ product: product, customer: customer, price: price });
 };
 
 exports.webhookCheckout = (req, res, next) => {

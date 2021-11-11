@@ -29,13 +29,21 @@ const upload = multer({
 exports.uploadProductImages = upload.fields([
   { name: 'imageFront', maxCount: 1 },
   { name: 'imageCover', maxCount: 1 },
-  { name: 'images', maxCount: 5 },
+  { name: 'image1', maxCount: 1 },
+  { name: 'image2', maxCount: 1 },
+  { name: 'image3', maxCount: 1 },
 ]);
 
 exports.resizeProductImages = catchAsync(async (req, res, next) => {
   // console.log(req.files);
 
-  if (!req.files.imageCover || !req.files.imageFront || !req.files.images)
+  if (
+    !req.files.imageCover ||
+    !req.files.imageFront ||
+    !req.files.image1 ||
+    !req.files.image2 ||
+    !req.files.image3
+  )
     return next();
 
   // 1) Front image
@@ -55,21 +63,43 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
     .toFile(`public/img/products/${req.body.imageCover}`);
 
   // 3) images
-  req.body.images = [];
 
-  await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const filename = `product-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+  req.body.image1 = `product-${req.params.id}-${Date.now()}-image1.jpeg`;
+  await sharp(req.files.image1[0].buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/products/${req.body.image1}`);
 
-      await sharp(file.buffer)
-        .resize(500, 500)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/products/${filename}`);
+  req.body.image2 = `product-${req.params.id}-${Date.now()}-image2.jpeg`;
+  await sharp(req.files.image2[0].buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/products/${req.body.image2}`);
 
-      req.body.images.push(filename);
-    })
-  );
+  req.body.image3 = `product-${req.params.id}-${Date.now()}-image3.jpeg`;
+  await sharp(req.files.image3[0].buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/products/${req.body.image3}`);
+
+  // req.body.images = [];
+
+  // await Promise.all(
+  //   req.files.images.map(async (file, i) => {
+  //     const filename = `product-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+  //     await sharp(file.buffer)
+  //       .resize(500, 500)
+  //       .toFormat('jpeg')
+  //       .jpeg({ quality: 90 })
+  //       .toFile(`public/img/products/${filename}`);
+
+  //     req.body.images.push(filename);
+  //   })
+  // );
 
   next();
 });

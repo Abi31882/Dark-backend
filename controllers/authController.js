@@ -51,6 +51,24 @@ exports.signup = catchAsync(async (req, res, next) => {
   // console.log(res);
 });
 
+exports.retailorSignup = catchAsync(async (req, res, next) => {
+  const newCustomer = await Customer.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+    role: 'retailor',
+    photo: req.body.photo,
+    address: req.body.address,
+  });
+
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  await new Email(newCustomer, url).sendWelcome();
+
+  createSendToken(newCustomer, 201, req, res);
+  // console.log(res);
+});
+
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -68,6 +86,33 @@ exports.login = catchAsync(async (req, res, next) => {
     !(await customer.correctPassword(password, customer.password))
   ) {
     return next(new AppError('Incorrect email or password', 401));
+  }
+
+  // 3) IF EVERYTHING OK, SEND TOKEN TO CLIENT
+  createSendToken(customer, 200, req, res);
+});
+
+exports.retailorLogin = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // 1) IF EMAIL & PASSWORD EXISTS
+  if (!email || !password) {
+    return next(new AppError('Please provide email and password', 400));
+  }
+
+  // 2) CHECK IF Customer EXISTS && PASSWORD IS CORRECT
+  const customer = await Customer.findOne({ email }).select('+password');
+  // const correct = await customer.correctPassword(password, customer.password);
+
+  if (
+    !customer ||
+    !(await customer.correctPassword(password, customer.password))
+  ) {
+    return next(new AppError('Incorrect email or password', 401));
+  }
+
+  if (customer.role !== 'retailor') {
+    return next(new AppError('Sorry, but you are not a retailor', 400));
   }
 
   // 3) IF EVERYTHING OK, SEND TOKEN TO CLIENT
