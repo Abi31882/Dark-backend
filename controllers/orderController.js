@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Product = require('../models/productModel');
-const Customer = require('../models/customerModel');
+// const Customer = require('../models/customerModel');
 const Order = require('../models/orderModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
@@ -126,14 +126,18 @@ exports.getMyOrders = catchAsync(async (req, res, next) => {
 });
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const doc = await Order.create(req.body);
+  const doc = await Order.create({
+    product: req.params.productId,
+    customer: req.customer.id,
+    // price: req.body.price,
+  });
 
-  const product = await Product.findById(req.body.product);
-  const customer = await Customer.findById(req.body.customer);
+  // c/onst product = await Product.findById(req.parms.productId);
+  // const customer = await Customer.findById(req.customer.id);
 
-  if (!product || !customer) {
-    return next(new AppError('no document or duplicate one', 404));
-  }
+  // if (!product || !customer) {
+  //   return next(new AppError('no document or duplicate one', 404));
+  // }
 
   res.status(201).json({
     status: 'success',

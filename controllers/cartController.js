@@ -2,7 +2,7 @@ const Cart = require('../models/cartModel');
 const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const Product = require('../models/productModel');
+// const Product = require('../models/productModel');
 
 exports.setCustomerId = (req, res, next) => {
   if (!req.body.customer) req.body.customer = req.customer.id;
@@ -66,21 +66,22 @@ exports.updateQuantity = catchAsync(async (req, res, next) => {
 
 exports.deleteFromCart = catchAsync(async (req, res, next) => {
   const doc = await Cart.findById(req.params.cartId);
-  const products = await Product.findById(req.params.productId);
+  // const products = await Product.findById(req.params.productId);
+  const deleted = doc.product.deleteOne({ id: req.params.productId });
 
-  const index = doc.product.indexOf(products);
+  // const index = doc.product.indexOf(products);
 
-  if (products) {
-    doc.product.splice(index, 1);
-  } else {
-    return next(new AppError('the product is not in the cart', 404));
-  }
+  // if (products) {
+  //   doc.product.splice(index, 1);
+  // } else {
+  //   return next(new AppError('the product is not in the cart', 404));
+  // }
 
   await doc.save({ validateBeforeSave: false });
 
   res.status(200).json({
     status: 'success',
-    doc,
+    deleted,
   });
 });
 

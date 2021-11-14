@@ -9,14 +9,15 @@ router.use(authController.protect);
 router.get(
   '/checkout-session/:productId',
   authController.protect,
+  orderController.createOrder,
   orderController.getCheckoutSession
 );
 
 router.get('/my-orders', authController.protect, orderController.getMyOrders);
 
-router
-  .route('/product/:productId')
-  .post(orderController.setProductCustomerIds, orderController.createOrder);
+// router
+//   .route('/product/:productId')
+//   .post(orderController.setProductCustomerIds, orderController.createOrder);
 
 router.use(authController.restrictTo('admin', 'retailor'));
 

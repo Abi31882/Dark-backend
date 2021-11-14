@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Order must have a price'],
+    // required: [true, 'Order must have a price'],
   },
   createdAt: {
     type: Date,
