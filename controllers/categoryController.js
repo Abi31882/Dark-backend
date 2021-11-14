@@ -61,7 +61,16 @@ exports.getCategory = factory.getOne(Category, {
 });
 exports.createCategory = factory.createOne(Category);
 exports.updateCategory = factory.updateOne(Category);
-exports.deleteCategory = factory.deleteOne(Category);
+// exports.deleteCategory = factory.deleteOne(Category);
+
+exports.deleteCategory = catchAsync(async (req, res, next) => {
+  const doc = await Category.findByIdAndDelete(req.params.id);
+
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404));
+  }
+  res.status(204).json(null);
+});
 
 exports.getAllCategories = catchAsync(async (req, res, next) => {
   if (req.query.query) {
