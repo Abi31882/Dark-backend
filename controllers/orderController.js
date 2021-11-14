@@ -37,7 +37,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `http://127.0.0.1:3000/products`,
+    success_url: `http://localhost:3000/products`,
     cancel_url: `https://youthful-clarke-cacfd7.netlify.app/products/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
@@ -91,9 +91,8 @@ exports.webhookCheckout = (req, res, next) => {
   });
   try {
     event = stripe.webhooks.constructEvent(payloadString, header, secret);
-    if (event.type === 'checkout.session.completed') {
-      createBookingCheckout();
-    }
+    // if (event.type === 'checkout.session.completed') {
+    createBookingCheckout();
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
