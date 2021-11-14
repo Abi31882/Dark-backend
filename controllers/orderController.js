@@ -91,6 +91,9 @@ exports.webhookCheckout = (req, res, next) => {
   });
   try {
     event = stripe.webhooks.constructEvent(payloadString, header, secret);
+    if (event.type === 'checkout.session.completed') {
+      createBookingCheckout();
+    }
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
