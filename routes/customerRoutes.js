@@ -20,7 +20,12 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 router.use(authController.protect);
 
 router.patch('/updateMyPassword', authController.updatePassword);
-router.get('/me', customerController.getMe, customerController.getCustomer);
+router.get(
+  '/me',
+  authController.protect,
+  customerController.getMe,
+  customerController.getCustomer
+);
 router.patch(
   '/updateMe',
   customerController.uploadCustomerPhoto,
@@ -40,7 +45,7 @@ router
 
 router
   .route('/:id')
-  .get(authController.restrictTo('admin'), customerController.getCustomer)
+  .get(customerController.getCustomer)
   .patch(customerController.updateCustomer)
   .delete(
     authController.restrictTo('admin'),

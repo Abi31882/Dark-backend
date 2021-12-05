@@ -87,6 +87,9 @@ exports.login = catchAsync(async (req, res, next) => {
   ) {
     return next(new AppError('Incorrect email or password', 401));
   }
+  if (customer.role !== 'customer') {
+    return next(new AppError('Sorry, but you are not a customer', 400));
+  }
 
   // 3) IF EVERYTHING OK, SEND TOKEN TO CLIENT
   createSendToken(customer, 200, req, res);

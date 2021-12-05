@@ -9,7 +9,6 @@ router.use(authController.protect);
 router.get(
   '/checkout-session/:productId',
   authController.protect,
-  orderController.createOrder,
   orderController.getCheckoutSession
 );
 

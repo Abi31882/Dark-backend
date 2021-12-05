@@ -1,4 +1,6 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(
+  'sk_test_51Ju6xDSHY9y2p2gcm0fDPikXYs3bbJjGD5sA8BreueaqJwR5eDIJpH9SATlLHaHziiav2Pk25nBjiIqQPkNG625R00Fn54dHDG'
+);
 const Product = require('../models/productModel');
 // const Customer = require('../models/customerModel');
 const Order = require('../models/orderModel');
@@ -29,6 +31,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   if (!product) {
     return next(new AppError('there is no such product', 404));
   }
+  Order.create({
+    product: req.params.productId,
+    customer: req.customer.id,
+  });
   // console.log(product);
 
   // 2) Create checkout session
@@ -119,17 +125,13 @@ exports.getMyOrders = catchAsync(async (req, res, next) => {
   const productIDs = orders.map((el) => el.product);
   const doc = await Product.find({ _id: { $in: productIDs } });
 
-  res.status(200).json({
-    status: 'success',
-    doc,
-  });
+  res.status(200).json(doc);
 });
 
 exports.createOrder = catchAsync(async (req, res, next) => {
   const doc = await Order.create({
     product: req.params.productId,
     customer: req.customer.id,
-    // price: req.body.price,
   });
 
   // c/onst product = await Product.findById(req.parms.productId);

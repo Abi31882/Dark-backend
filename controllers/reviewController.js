@@ -37,7 +37,6 @@ exports.createReview = catchAsync(async (req, res, next) => {
       message: 'there is no product matched',
     });
   }
-  next();
 });
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
