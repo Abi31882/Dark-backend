@@ -43,8 +43,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-products/?product=${
     //   req.params.tourId
     // }&customer=${req.customer.id}&price=${product.price}`,
-    success_url: `http://localhost:3000/products`,
-    cancel_url: `https://youthful-clarke-cacfd7.netlify.app/products/${product.id}`,
+    success_url: `https://zen-varahamihira-1a4783.netlify.app/products`,
+    cancel_url: `https://zen-varahamihira-1a4783.netlify.app/${product.id}`,
     customer_email: req.customer.email,
     client_reference_id: req.params.productId,
     line_items: [
