@@ -23,6 +23,7 @@ const reviewSchema = new mongoose.Schema(
     },
 
     customer: {
+      unique: true,
       type: mongoose.Schema.ObjectId,
       ref: 'Customer',
       required: [true, 'Review must belong to a customer'],
@@ -47,7 +48,7 @@ reviewSchema.pre(/^find/, function (next) {
 
   this.populate({
     path: 'customer',
-    select: 'name',
+    select: 'name photo',
   });
 
   next();
