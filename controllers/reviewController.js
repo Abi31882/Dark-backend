@@ -18,19 +18,6 @@ exports.createReview = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.productId);
 
   if (product) {
-    // try {
-    //   const doc = await Review.create(req.body);
-
-    //   res.status(201).json({
-    //     status: 'success',
-    //     doc,
-    //   });
-    // } catch (err) {
-    //   res.status(404).json({
-    //     status: 'there is no product',
-    //     err,
-    //   });
-    // }
     const doc = await Review.create(req.body);
 
     res.status(201).json({
