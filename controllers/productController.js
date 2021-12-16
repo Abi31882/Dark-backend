@@ -1,5 +1,6 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const { cloudinary } = require('../utils/cloudinary');
 const Product = require('../models/productModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
@@ -99,6 +100,29 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
 
   //     req.body.images.push(filename);
   //   })
+  // );
+  const fileStr1 = `public/img/products/${req.body.imageFront}`;
+  const fileStr2 = `public/img/products/${req.body.imageCover}`;
+  const fileStr3 = `public/img/products/${req.body.image1}`;
+  const fileStr4 = `public/img/products/${req.body.image2}`;
+  const fileStr5 = `public/img/products/${req.body.image3}`;
+
+  const uploadedResponse1 = await cloudinary.uploader.upload(fileStr1);
+  const uploadedResponse2 = await cloudinary.uploader.upload(fileStr2);
+  const uploadedResponse3 = await cloudinary.uploader.upload(fileStr3);
+  const uploadedResponse4 = await cloudinary.uploader.upload(fileStr4);
+  const uploadedResponse5 = await cloudinary.uploader.upload(fileStr5);
+
+  req.body.imageFront = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse1.version}/${uploadedResponse1.public_id}.jpg`;
+  req.body.imageCover = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse2.version}/${uploadedResponse2.public_id}.jpg`;
+  req.body.image1 = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse3.version}/${uploadedResponse3.public_id}.jpg`;
+  req.body.image2 = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse4.version}/${uploadedResponse4.public_id}.jpg`;
+  req.body.image3 = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse5.version}/${uploadedResponse5.public_id}.jpg`;
+  req.body.version = `${uploadedResponse1.version}`;
+  req.body.public_id = `${uploadedResponse1.public_id}`;
+  // console.log(uploadedResponse);
+  // console.log(
+  //   `https://res.cloudinary.com/dzrmunwn7/image/upload/v${req.body.version}/${req.body.public_id}.jpg`
   // );
 
   next();

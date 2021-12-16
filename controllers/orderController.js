@@ -52,10 +52,11 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         name: `${product.name}`,
         description: product.description,
         images: [
-          `https://dark-3.herokuapp.com/img/products/${product.imageFront}`,
+          // `https://dark-3.herokuapp.com/img/products/${product.imageFront}`,
+          product.imageFront,
         ],
         amount: product.price * 100,
-        currency: 'inr',
+        currency: 'usd',
         quantity: 1,
       },
     ],

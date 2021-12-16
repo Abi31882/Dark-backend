@@ -30,6 +30,7 @@ router
     categoryController.updateCategory
   )
   .delete(
+    '/:id',
     authController.protect,
     authController.restrictTo('admin', 'retailor'),
     categoryController.deleteCategory

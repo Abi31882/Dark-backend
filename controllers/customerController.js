@@ -4,6 +4,7 @@ const Customer = require('../models/customerModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
+const { cloudinary } = require('../utils/cloudinary');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -41,6 +42,11 @@ exports.resizeCustomerPhoto = catchAsync(async (req, res, next) => {
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`public/img/customers/${req.file.filename}`);
+
+  const fileStr = `public/img/customers/${req.file.filename}`;
+  const uploadedResponse = await cloudinary.uploader.upload(fileStr, {});
+  // console.log(uploadedResponse);
+  req.file.filename = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse.version}/${uploadedResponse.public_id}.jpg`;
 
   next();
 });

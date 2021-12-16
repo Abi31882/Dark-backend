@@ -1,5 +1,6 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const { cloudinary } = require('../utils/cloudinary');
 const Category = require('../models/categoryModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
@@ -45,6 +46,11 @@ exports.resizeCategoryPhoto = catchAsync(async (req, res, next) => {
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`public/img/categories/${req.body.photo}`);
+
+  const fileStr = `public/img/categories/${req.body.photo}`;
+  const uploadedResponse = await cloudinary.uploader.upload(fileStr, {});
+  // console.log(uploadedResponse);
+  req.body.photo = `https://res.cloudinary.com/dzrmunwn7/image/upload/v${uploadedResponse.version}/${uploadedResponse.public_id}.jpg`;
 
   next();
 });
