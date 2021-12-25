@@ -40,7 +40,10 @@ router.delete('/deleteMe', customerController.deleteMe);
 
 router
   .route('/')
-  .get(authController.restrictTo('admin'), customerController.getAllCustomers)
+  .get(
+    authController.restrictTo('admin', 'retailor'),
+    customerController.getAllCustomers
+  )
   .post(authController.restrictTo('admin'), customerController.createCustomer);
 
 router
